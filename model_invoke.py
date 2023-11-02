@@ -1,17 +1,17 @@
 import json
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer
+from auto_gptq import AutoGPTQForCausalLM
 
 model_name_or_path = "TheBloke/Nous-Hermes-13B-GPTQ"
-# To use a different branch, change revision
-# For example: revision="main"
-
-model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
-                                             device_map="auto",
-                                             trust_remote_code=False
-                                            )
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
+
+model = AutoGPTQForCausalLM.from_quantized(model_name_or_path,
+        use_safetensors=True,
+        trust_remote_code=True,
+        device="cuda:0",
+        quantize_config=None)
 
 def invoke(input_text):
     input_json = json.loads(input_text)
